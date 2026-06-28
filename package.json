@@ -6,10 +6,16 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "node scripts/test-auth.js && node scripts/test-dashboard.js && node scripts/test-leads.js && node scripts/test-properties.js && node scripts/test-deals.js && node scripts/test-buyers.js && node scripts/test-marketing.js && node scripts/test-ai.js && node scripts/test-reports.js && node scripts/test-settings.js && node scripts/test-apikeys.js && node scripts/test-runner.js"
   },
   "dependencies": {
+    "@prisma/client": "^6.19.3",
+    "bcryptjs": "^3.0.3",
+    "jose": "^6.2.3",
+    "jsonwebtoken": "^9.0.3",
     "next": "16.2.9",
+    "prisma": "^6.19.3",
     "react": "19.2.4",
     "react-dom": "19.2.4"
   },
@@ -19,5 +25,8 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.9",
     "tailwindcss": "^4"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.js"
   }
 }

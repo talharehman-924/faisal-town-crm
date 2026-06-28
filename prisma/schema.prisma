@@ -1,0 +1,135 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id          String        @id @default(uuid())
+  email       String        @unique
+  name        String
+  password    String
+  roleId      String
+  role        Role          @relation(fields: [roleId], references: [id])
+  leads       Lead[]
+  deals       Deal[]
+  activities  ActivityLog[]
+  apiKeys     ApiKey[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+model Role {
+  id          String       @id @default(uuid())
+  name        String       @unique // e.g. ADMIN, AGENT, CLIENT
+  description String?
+  users       User[]
+  permissions Permission[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model Permission {
+  id          String   @id @default(uuid())
+  name        String   @unique // e.g. manage:leads, view:properties
+  description String?
+  roles       Role[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Property {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  price       Float
+  address     String
+  status      String   // e.g. AVAILABLE, PENDING, SOLD
+  type        String   // e.g. RESIDENTIAL, COMMERCIAL, LAND
+  deals       Deal[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Lead {
+  id              String           @id @default(uuid())
+  name            String
+  email           String
+  phone           String?
+  status          String           // e.g. NEW, CONTACTED, QUALIFIED, LOST
+  source          String           // e.g. WEBSITE, REFERRAL, SOCIAL_MEDIA
+  agentId         String?
+  agent           User?            @relation(fields: [agentId], references: [id])
+  deals           Deal[]
+  buyerPreference BuyerPreference?
+  aiScore         Int?             // e.g. 1-100
+  aiInsights      String?          // e.g. "Highly interested in residential properties..."
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+}
+
+model Deal {
+  id         String   @id @default(uuid())
+  title      String
+  value      Float
+  status     String   // e.g. NEGOTIATION, UNDER_CONTRACT, CLOSED_WON, CLOSED_LOST
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id])
+  leadId     String
+  lead       Lead     @relation(fields: [leadId], references: [id])
+  agentId    String
+  agent      User     @relation(fields: [agentId], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model BuyerPreference {
+  id                String   @id @default(uuid())
+  leadId            String   @unique
+  lead              Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  minBudget         Float
+  maxBudget         Float
+  preferredType     String   // e.g. RESIDENTIAL, COMMERCIAL, LAND
+  preferredLocation String   // e.g. Faisal Town, Block B etc.
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model Campaign {
+  id             String   @id @default(uuid())
+  title          String
+  subject        String
+  body           String
+  status         String   // e.g. DRAFT, SENT
+  targetAudience String   // e.g. ALL_LEADS, NEW_LEADS, QUALIFIED_LEADS
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model SystemSetting {
+  key       String   @id
+  value     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ApiKey {
+  id        String   @id @default(uuid())
+  key       String   @unique
+  name      String   // e.g. Zapier Integration
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}
+
+model ActivityLog {
+  id        String   @id @default(uuid())
+  action    String   // e.g. Lead Created, Property Status Updated
+  details   String
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+}
