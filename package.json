@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma generate && prisma db push && next build",
     "start": "next start",
     "lint": "eslint",
     "test": "node scripts/test-auth.js && node scripts/test-dashboard.js && node scripts/test-leads.js && node scripts/test-properties.js && node scripts/test-deals.js && node scripts/test-buyers.js && node scripts/test-marketing.js && node scripts/test-ai.js && node scripts/test-reports.js && node scripts/test-settings.js && node scripts/test-apikeys.js && node scripts/test-runner.js"
