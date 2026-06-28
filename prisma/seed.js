@@ -87,10 +87,8 @@ async function main() {
   const agentPassword = await bcrypt.hash('agent123', 10);
   const clientPassword = await bcrypt.hash('client123', 10);
 
-  const adminUser = await prisma.user.upsert({
-    where: { email: 'admin@crm.com' },
-    update: {},
-    create: {
+  const adminUser = await prisma.user.create({
+    data: {
       email: 'admin@crm.com',
       name: 'System Admin',
       password: hashedPassword,
@@ -98,10 +96,8 @@ async function main() {
     },
   });
 
-  const agentUser = await prisma.user.upsert({
-    where: { email: 'agent@crm.com' },
-    update: {},
-    create: {
+  const agentUser = await prisma.user.create({
+    data: {
       email: 'agent@crm.com',
       name: 'Faisal Agent',
       password: agentPassword,
@@ -109,10 +105,8 @@ async function main() {
     },
   });
 
-  const clientUser = await prisma.user.upsert({
-    where: { email: 'client@crm.com' },
-    update: {},
-    create: {
+  const clientUser = await prisma.user.create({
+    data: {
       email: 'client@crm.com',
       name: 'Zahid Khan',
       password: clientPassword,
